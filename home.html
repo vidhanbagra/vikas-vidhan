@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kalpsthan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent:#ff6b6b; /* warm travel accent */
+      --muted:#6b7280;
+      --bg:#0f172a;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial; margin:0; background:linear-gradient(180deg,#071029 0%, #071b2a 60%); color:#e6eef8;}
+    .container{max-width:1100px;margin:32px auto;padding:24px}
+
+    /* header */
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ffb86b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#06202a}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    /* hero + slideshow */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-bottom:18px}
+    .hero-card{background:var(--card);padding:22px;border-radius:14px;box-shadow: 0 6px 20px rgba(2,6,23,0.6)}
+    .hero-left h2{margin:0 0 10px 0;font-size:28px}
+    .hero-left p{color:var(--muted)}
+    .cta{display:inline-block;margin-top:14px;padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ffb86b);color:#06121a;font-weight:600;text-decoration:none}
+
+    /* slideshow */
+    .slideshow{border-radius:10px;overflow:hidden;height:360px;background:#000}
+    .slides{display:flex;transition:transform 0.6s ease}
+    .slide{min-width:100%;height:360px;background-size:cover;background-position:center}
+    .thumbs{display:flex;gap:8px;margin-top:10px}
+    .thumb{width:64px;height:44px;background-size:cover;background-position:center;border-radius:6px;cursor:pointer;opacity:0.8}
+
+    /* destination grid */
+    .destinations{display:flex;gap:12px;margin-top:6px}
+    .dest{flex:1;padding:12px;border-radius:10px;background:var(--glass);text-align:center;opacity:0.6}
+    .dest.disabled{filter:grayscale(1);opacity:0.35}
+    .dest h3{margin:6px 0}
+
+    /* wizard */
+    .wizard{margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px}
+    .step{display:none}
+    .step.active{display:block}
+    .form-row{display:flex;gap:12px;margin-bottom:12px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+    input[type=number],select,input[type=text]{background:#061226;border:1px solid rgba(255,255,255,0.03);color:#dfefff;padding:10px;border-radius:8px;min-width:0}
+    .btns{display:flex;gap:8px;justify-content:flex-end}
+    button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:10px;color:#e6eef8;cursor:pointer}
+    button.primary{background:linear-gradient(90deg,var(--accent),#ffb86b);border:0;color:#06121a}
+
+    /* result */
+    .result{margin-top:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px}
+    .todo{background:linear-gradient(180deg,#061226, #051424);padding:12px;border-radius:8px}
+    .chip{display:inline-block;padding:6px 8px;border-radius:6px;background:#071a2b;margin-right:8px;font-size:13px}
+
+    /* responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .slides{height:220px}
+      .slide{height:220px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">RB</div>
+        <div>
+         <h1>Kalpsthan</h1>
+<p class="lead">Your Smart Tour Guide • Plan Trips Instantly • Jaipur </p>
+        </div>
+      </div>
+      <div>
+        <small style="color:var(--muted)">colab with TechGego</small>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="hero-card hero-left">
+        <h2>Your Smart Travel Companion</h2>
+        <p>Choose a destination to start — Jaipur is enabled for this demo. After selecting Jaipur, our wizard will ask a few simple questions and generate a ready-to-use itinerary, budget hints, hotel suggestions and a to-do list. All data comes from local JS arrays (no backend required).</p>
+        <a class="cta" id="start-journey">Plan My Jaipur Trip</a>
+
+        <div class="destinations" style="margin-top:18px">
+          <div class="dest selected">
+            <h3>Jaipur</h3>
+            <div style="font-size:12px;color:var(--muted)">Click to demo</div>
+          </div>
+          <div class="dest disabled">
+            <h3>Delhi</h3>
+            <div style="font-size:12px;color:var(--muted)">Coming soon</div>
+          </div>
+          <div class="dest disabled">
+            <h3>Goa</h3>
+            <div style="font-size:12px;color:var(--muted)">Coming soon</div>
+          </div>
+        </div>
+
+        <div class="wizard" id="wizard" style="display:none">
+          <div class="step active" id="step-1">
+            <h3>Step 1 — Trip basics</h3>
+            <div class="form-row">
+              <div style="flex:1">
+                <label>No. of people</label>
+                <input id="people" type="number" min="1" value="2">
+              </div>
+              <div style="flex:1">
+                <label>Relation</label>
+                <select id="relation">
+                  <option value="couple">Husband & Wife</option>
+                  <option value="friends">Friends</option>
+                  <option value="family">Family</option>
+                  <option value="solo">Solo</option>
+                </select>
+              </div>
+            </div>
+            <div class="btns">
+              <button id="to-step-2" class="primary">Next</button>
+            </div>
+          </div>
+
+          <div class="step" id="step-2">
+            <h3>Step 2 — Preferences</h3>
+            <div class="form-row">
+              <div style="flex:1">
+                <label>How many days?</label>
+                <input id="days" type="number" min="1" value="3">
+              </div>
+              <div style="flex:1">
+                <label>Food preference</label>
+                <select id="food">
+                  <option value="mixed">Mixed</option>
+                  <option value="veg">Vegetarian</option>
+                  <option value="nonveg">Non-Veg</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div style="flex:1">
+                <label>Budget per person (₹)</label>
+                <input id="budget" type="number" min="500" value="3000">
+              </div>
+              <div style="flex:1">
+                <label>Hotel preference</label>
+                <select id="hotel-pref">
+                  <option value="low">Budget</option>
+                  <option value="mid">Comfort</option>
+                  <option value="high">Luxury</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="btns">
+              <button id="back-1">Back</button>
+              <button id="to-step-3" class="primary">Next</button>
+            </div>
+          </div>
+
+          <div class="step" id="step-3">
+            <h3>Step 3 — Choose Interests & Sites</h3>
+            <div style="margin-bottom:12px;color:var(--muted)">Pick priorities (we'll prioritize your top choices)</div>
+            <div class="form-row">
+              <div style="flex:1">
+                <label><input type="checkbox" value="heritage" class="interest" checked> Heritage & Monuments</label>
+                <label><input type="checkbox" value="romantic" class="interest"> Romantic Spots</label>
+                <label><input type="checkbox" value="adventure" class="interest"> Adventure / Experiences</label>
+                <label><input type="checkbox" value="shopping" class="interest"> Shopping & Markets</label>
+              </div>
+            </div>
+
+            <div class="btns">
+              <button id="back-2">Back</button>
+              <button id="generate" class="primary">Generate Plan</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="hero-card" style="padding:10px">
+        <div class="slideshow" id="slideshow">
+          <div class="slides" id="slides">
+            <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&s=5e4f3b1c8c1e5b2e4b4f0f4b9b6c3a6f')"></div>
+            <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b1a1f1f4f4c5b6f7c6f8c9d1f0e2c3a')"></div>
+            <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1533743983669-94fa1f7b1b62?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a5b7a1f1b2c3d4e5f6a7b8c9d0e1f2a')"></div>
+          </div>
+        </div>
+        <div class="thumbs" id="thumbs">
+          <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&s=5e4f3b1c8c1e5b2e4b4f0f4b9b6c3a6f')" data-index="0"></div>
+          <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&s=5b1a1f1f4f4c5b6f7c6f8c9d1f0e2c3a')" data-index="1"></div>
+          <div class="thumb" style="background-image:url('https://images.unsplash.com/photo-1533743983669-94fa1f7b1b62?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a5b7a1f1b2c3d4e5f6a7b8c9d0e1f2a')" data-index="2"></div>
+        </div>
+
+        <div style="margin-top:12px;color:var(--muted);font-size:13px">Collage & slideshow — shows Jaipur highlights. Use these images as placeholders for your own resort pics later.</div>
+      </div>
+    </div>
+
+    <div id="result-area" style="display:none">
+      <div class="result">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h3 id="plan-title">Your Jaipur Itinerary</h3>
+            <div style="color:var(--muted);font-size:13px" id="plan-summary">Summary will appear here</div>
+          </div>
+          <div>
+            <div class="chip" id="cost-chip">Estimated cost: —</div>
+            <div class="chip" id="days-chip">Days: —</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 320px;gap:12px">
+          <div>
+            <h4>Itinerary (Day-wise)</h4>
+            <div id="itinerary"></div>
+
+            <h4 style="margin-top:12px">To-Do List</h4>
+            <div class="todo" id="todo-list"></div>
+
+            <h4 style="margin-top:12px">Cheapest Quick Visit</h4>
+            <div style="background:#061225;padding:12px;border-radius:8px" id="cheap-visit"></div>
+
+          </div>
+          <div>
+            <h4>Hotel suggestions</h4>
+            <div id="hotels"></div>
+
+            <h4 style="margin-top:12px">Nearby food picks</h4>
+            <div id="food-suggestions"></div>
+
+            <h4 style="margin-top:12px">Emergency (demo)</h4>
+            <div style="background:#061225;padding:10px;border-radius:8px">
+              <div style="font-size:13px;color:var(--muted)">Nearest hospital (demo):</div>
+              <div style="margin-top:8px">Sawai Man Singh Hospital — 4.2 km</div>
+              <div style="margin-top:6px;font-size:12px;color:var(--muted)">In real product, call an API or use geolocation + maps integration.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div id="map" style="height: 400px;"></div>
+<script>
+  var map = L.map('map').setView([26.9124, 75.7873], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Example markers
+  L.marker([26.9855, 75.8513]).addTo(map).bindPopup("Amber Fort");
+  L.marker([26.9239, 75.8267]).addTo(map).bindPopup("Hawa Mahal");
+  L.marker([26.9166, 75.8206]).addTo(map).bindPopup("Johari Bazaar");
+</script>
+
+  </div>
+
+  <script>
+    /* ---------- Mock Data (arrays) ---------- */
+    const DESTINATIONS = [
+      {id:'jaipur',name:'Jaipur',enabled:true},
+      {id:'delhi',name:'Delhi',enabled:false},
+      {id:'goa',name:'Goa',enabled:false}
+    ];
+
+    // Sites with type tags and estimated duration (hours) and cost per person
+    const SITES = [
+      {id:'amber',name:'Amber Fort',tags:['heritage'],duration:3,cost:200},
+      {id:'citypalace',name:'City Palace',tags:['heritage'],duration:2,cost:150},
+      {id:'hawa',name:'Hawa Mahal',tags:['heritage'],duration:1,cost:0},
+      {id:'jalm',name:'Jal Mahal',tags:['romantic'],duration:1,cost:0},
+      {id:'nahar',name:'Nahargarh Fort',tags:['romantic','heritage'],duration:2,cost:0},
+      {id:'hotair',name:'Hot Air Balloon',tags:['adventure'],duration:4,cost:3500},
+      {id:'elephant',name:'Elephant Experience',tags:['adventure'],duration:3,cost:1200},
+      {id:'johari',name:'Johari Bazaar',tags:['shopping'],duration:3,cost:0},
+      {id:'bapu',name:'Bapu Bazaar',tags:['shopping'],duration:2,cost:0},
+    ];
+
+    const HOTELS = {
+      low:[{name:'Budget Inn (MI Road)',price:800},{name:'Hostel Stay (Old City)',price:500}],
+      mid:[{name:'Comfort Suites',price:2200},{name:'Heritage Hotel',price:1800}],
+      high:[{name:'Royal Palace Hotel',price:6500},{name:'Luxury Retreat',price:9500}]
+    };
+
+    const FOOD = [
+      {place:'Laxmi Mishthan Bhandar (veg)',tags:['veg'],distance:1.2},
+      {place:'Rawat Mishtan Bhandar (famous pyaaz kachori)',tags:['veg'],distance:1.8},
+      {place:'Handi Restaurant (nonveg)',tags:['nonveg'],distance:2.1},
+      {place:'Street Food — Bapu Bazar',tags:['veg','nonveg'],distance:0.9}
+    ];
+
+    /* ---------- Slideshow logic ---------- */
+    const slidesEl = document.getElementById('slides');
+    const thumbs = document.querySelectorAll('.thumb');
+    let idx = 0;
+    function go(i){
+      idx = (i + thumbs.length) % thumbs.length;
+      slidesEl.style.transform = `translateX(-${idx*100}%)`;
+    }
+    thumbs.forEach(t=>t.addEventListener('click',e=>go(Number(e.target.dataset.index))));
+    setInterval(()=>go(idx+1),5000);
+
+    /* ---------- Wizard logic ---------- */
+    const startBtn = document.getElementById('start-journey');
+    const wizard = document.getElementById('wizard');
+    const stepEls = {1:document.getElementById('step-1'),2:document.getElementById('step-2'),3:document.getElementById('step-3')};
+
+    startBtn.addEventListener('click',()=>{
+      wizard.style.display = 'block';
+      window.scrollTo({top:250,behavior:'smooth'});
+    });
+
+    document.getElementById('to-step-2').addEventListener('click',()=> switchStep(2));
+    document.getElementById('back-1').addEventListener('click',()=> switchStep(1));
+    document.getElementById('to-step-3').addEventListener('click',()=> switchStep(3));
+    document.getElementById('back-2').addEventListener('click',()=> switchStep(2));
+
+    function switchStep(n){
+      Object.values(stepEls).forEach(el=>el.classList.remove('active'));
+      stepEls[n].classList.add('active');
+    }
+
+    /* ---------- Generate Plan ---------- */
+    document.getElementById('generate').addEventListener('click',()=>{
+      // collect inputs
+      const people = Number(document.getElementById('people').value) || 1;
+      const relation = document.getElementById('relation').value;
+      const days = Number(document.getElementById('days').value) || 1;
+      const food = document.getElementById('food').value;
+      const budget = Number(document.getElementById('budget').value) || 1000;
+      const hotelPref = document.getElementById('hotel-pref').value;
+      const interests = Array.from(document.querySelectorAll('.interest:checked')).map(i=>i.value);
+
+      // basic heuristics for picking sites
+      const chosenSites = pickSites(interests, days);
+      const hotels = HOTELS[hotelPref];
+      const foodChoices = FOOD.filter(f=> f.tags.includes(food) || food==='mixed');
+
+      const estHotel = hotels[0];
+      const estHotelCost = estHotel.price * people * days;
+      const estSiteCost = chosenSites.reduce((s,it)=>s + (it.cost * people),0);
+      const estFoodPerDay = 250 * people; // quick heuristic
+      const estFoodCost = estFoodPerDay * days;
+      const total = estHotelCost + estSiteCost + estFoodCost;
+
+      // prepare day-wise itinerary (naive splitting)
+      const itinerary = makeItinerary(chosenSites, days);
+
+      // prepare cheapest quick visit
+      const cheapest = pickCheapestQuickVisit();
+
+      // prepare todo list
+      const todo = [];
+      todo.push(`Book hotel: ${estHotel.name} — approx ₹${estHotel.price}/night`);
+      if(relation==='couple') todo.push('Reserve a dinner table with lake view (Jal Mahal area)');
+      todo.push(...chosenSites.slice(0,5).map(s=> `Visit: ${s.name} (${s.duration} hrs) — entry ₹${s.cost}`));
+      todo.push('Carry ID cards for all members');
+      todo.push('Keep emergency contacts saved (demo show below)');
+
+      // render results
+      document.getElementById('result-area').style.display='block';
+      document.getElementById('plan-summary').textContent = `${people} person(s) • ${relation} • ${food} • ${days} day(s)`;
+      document.getElementById('cost-chip').textContent = `Estimated cost: ₹${total}`;
+      document.getElementById('days-chip').textContent = `Days: ${days}`;
+      document.getElementById('itinerary').innerHTML = renderItineraryHTML(itinerary);
+      document.getElementById('todo-list').innerHTML = '<ul style="margin:0;padding-left:18px;color:#dfefff">' + todo.map(t=>`<li style="margin-bottom:6px">${t}</li>`).join('') + '</ul>';
+      document.getElementById('hotels').innerHTML = hotels.map(h=>`<div style="padding:8px;background:#061226;margin-bottom:8px;border-radius:8px">${h.name} — ₹${h.price}/night</div>`).join('');
+      document.getElementById('food-suggestions').innerHTML = foodChoices.map(f=>`<div style="padding:6px;background:#061226;margin-bottom:6px;border-radius:6px">${f.place} — ${f.distance} km</div>`).join('');
+      document.getElementById('cheap-visit').innerHTML = `<strong>${cheapest.name}</strong><div style="color:var(--muted);font-size:13px;margin-top:6px">${cheapest.desc}</div>`;
+      window.scrollTo({top:400,behavior:'smooth'});
+    });
+
+    function pickSites(interests, days){
+      // prioritize sites matching interests and fill up to ~3 sites per day
+      const perDay=3;
+      const limit = days*perDay;
+      const preferred = SITES.filter(s=> s.tags.some(t=>interests.includes(t)) );
+      const rest = SITES.filter(s=> !preferred.includes(s));
+      const chosen = preferred.concat(rest).slice(0,Math.min(limit,SITES.length));
+      return chosen;
+    }
+
+    function makeItinerary(sites, days){
+      // naive split: rotate through sites day by day
+      const out = [];
+      for(let d=1; d<=days; d++){
+        const items = sites.filter((s,idx)=> idx % days === (d-1));
+        out.push({day:d,items});
+      }
+      return out;
+    }
+
+    function renderItineraryHTML(itin){
+      return itin.map(d=>{
+        const itemsHTML = d.items.map(i=>`<div style="padding:8px;background:#051724;margin-bottom:8px;border-radius:8px"><strong>${i.name}</strong><div style="color:var(--muted);font-size:13px">${i.duration} hrs • ₹${i.cost}</div></div>`).join('');
+        return `<div style="margin-bottom:12px"><strong>Day ${d.day}</strong>${itemsHTML}</div>`;
+      }).join('');
+    }
+
+    function pickCheapestQuickVisit(){
+      // pick site with cost 0 or lowest cost and low duration
+      const free = SITES.filter(s=> s.cost===0).sort((a,b)=>a.duration-b.duration);
+      if(free.length) return {name:free[0].name,desc:'Free/low-cost, great for a short trip and photos.'};
+      const sorted = SITES.slice().sort((a,b)=> (a.cost + a.duration*10) - (b.cost + b.duration*10));
+      return {name:sorted[0].name,desc:`Low-cost option — approx ₹${sorted[0].cost}`};
+    }
+
+  </script>
+</body>
+</html>
